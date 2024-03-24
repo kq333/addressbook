@@ -1,4 +1,6 @@
-# addressbook
+# Vue + Vuetify + PWA
+
+ Addressbook is a simple address book application that allows users to add new contacts to the database and edit existing contact information.
 
 ## Project setup
 ```
