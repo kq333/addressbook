@@ -19,9 +19,10 @@
         :editedItem="editedItem"
         @close-dialog="closeDialog"
         @save-contact="saveContact"
-        @update-firstName="editedItem.firstName = $event"
-        @update-lastName="editedItem.lastName = $event" @update-phone="editedItem.phone = $event"
-        @update-email="editedItem.email = $event"
+        @update-firstName="editedItem.firstName"
+        @update-lastName="editedItem.lastName"
+        @update-phone="editedItem.phone"
+        @update-email="editedItem.email"
       >
       </ContactForm>
     </v-dialog>
@@ -31,6 +32,7 @@
 <script>
 import ContactList from './components/ContactList.vue';
 import ContactForm from './components/ContactForm.vue';
+import contactsData from './contacts';
 
 export default {
   components: {
@@ -39,10 +41,7 @@ export default {
   },
   data() {
     return {
-      contacts: [
-        { id: 1, firstName: 'John', lastName: 'Doe', phone: '123456789', email: 'john@example.com' },
-        { id: 2, firstName: 'Jane', lastName: 'Doe', phone: '987654321', email: 'jane@example.com' }
-      ],
+      contacts: contactsData,
       dialog: false,
       dialogTitle: '',
       editedIndex: -1,
@@ -54,6 +53,7 @@ export default {
       },
     }
   },
+
   methods: {
     openAddDialog() {
       this.editedIndex = -1;
@@ -73,31 +73,57 @@ export default {
       this.dialog = true;
     },
     deleteContact(item) {
-      const index = this.contacts.indexOf(item);
-      if (confirm('Czy na pewno chcesz usunąć ten kontakt?')) {
-        this.contacts.splice(index, 1);
-      }
-    },
+  const index = this.contacts.indexOf(item);
+  if (confirm('Czy na pewno chcesz usunąć ten kontakt?')) {
+    this.contacts.splice(index, 1);
+    localStorage.setItem('contacts', JSON.stringify(this.contacts));
+  }
+},
     closeDialog() {
       this.dialog = false;
     },
 
     saveContact(contact) {
-      if (this.editedIndex > -1) {
-        Object.assign(this.contacts[this.editedIndex], contact);
-      } else {
-        contact.id = this.contacts.length + 1;
-        this.contacts.push(Object.assign({}, contact));
-      }
-    },
+  if (this.editedIndex > -1) {
+
+    Object.assign(this.contacts[this.editedIndex], contact);
+  } else {
+
+    contact.id = this.contacts.length + 1;
+    this.contacts.push(Object.assign({}, contact));
   }
-}
+
+  localStorage.setItem('contacts', JSON.stringify(this.contacts));
+},
+  },
+
+  created() {
+
+  const storedContacts = localStorage.getItem('contacts');
+  if (storedContacts) {
+
+    this.contacts = JSON.parse(storedContacts);
+  } else {
+
+    this.contacts = contactsData;
+  }
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(registration => {
+          console.log('ServiceWorker registration successful:', registration);
+        })
+        .catch(error => {
+          console.error('ServiceWorker registration failed:', error);
+        });
+    });
+  }
+  }}
+
 </script>
-
 <style scoped lang="css">
-
 .custom-toolbar {
   max-height: 65px;
 }
-
 </style>
