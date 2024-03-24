@@ -65,8 +65,8 @@ export default {
       ],
 
       emailRules: [
-        v => !!v || 'E-mail musi być podany',
-        v => /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()\\[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(v) || 'E-mail musi być poprawny',
+      value => !!value || 'E-mail musi być podany',
+      value => /^(([^<>()[\]\\.,;:\s@']+(\.[^<>()\\[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(value) || 'E-mail musi być poprawny',
       ],
     };
   },
@@ -89,13 +89,10 @@ export default {
       }
     },
     saveContact() {
-
       const isValid = this.$refs.form.validate();
       if (isValid) {
         this.$emit('save-contact', this.editedCopy);
         this.closeDialog();
-      } else {
-        console.log("Błąd Formularza.");
       }
     }
   },
